@@ -6,7 +6,7 @@ on:
       prerelease:
         description: '标记为预发布版本'
         type: boolean
-        default: true
+        default: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -23,6 +23,7 @@ jobs:
           - x86_64
         sdk:
           - "25.12"
+          - "24.10"
 
     steps:
       - uses: actions/checkout@v6
@@ -114,7 +115,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           BASE="https://github.com/${REPO}/releases/download/${TAG}"
-          ARCHS="aarch64_cortex-a53 aarch64_cortex-a72 aarch64_generic arm_cortex-a7_neon-vfpv4 arm_cortex-a9_neon i386_pentium4 mips_24kc mipsel_24kc x86_64"
+          ARCHS="aarch64_cortex-a53 x86_64"
           PREVIOUS_TAG="$(git tag --sort=-creatordate | grep '^v' | grep -v "^${TAG}$" | head -1 || true)"
 
           if [ -n "$PREVIOUS_TAG" ]; then
