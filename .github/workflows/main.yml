@@ -20,6 +20,7 @@ jobs:
       matrix:
         arch:
           - aarch64_cortex-a53
+          - aarch64_generic
           - x86_64
         sdk:
           - "25.12"
@@ -115,7 +116,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           BASE="https://github.com/${REPO}/releases/download/${TAG}"
-          ARCHS="aarch64_cortex-a53 x86_64"
+          ARCHS="aarch64_cortex-a53 aarch64_generic x86_64"
           PREVIOUS_TAG="$(git tag --sort=-creatordate | grep '^v' | grep -v "^${TAG}$" | head -1 || true)"
 
           if [ -n "$PREVIOUS_TAG" ]; then
@@ -185,7 +186,7 @@ jobs:
             write_section "Maintenance / 维护" '^(chore|test)([(][^)]+[)])?!?:'
             echo "## Packages / 安装包"
             echo ""
-            echo "## 📦 SDK 24.10 · 稳定版 (IPK)"
+            echo "## 📦 SDK 24.10 · (IPK)"
             echo ""
             echo "| 架构 | quickfile | luci-app-quickfile |"
             echo "| :--- | :--- | :--- |"
@@ -198,7 +199,7 @@ jobs:
             done
 
             echo ""
-            echo "## 📦 SDK 25.12 · 稳定版 (APK)"
+            echo "## 📦 SDK 25.12 · (APK)"
             echo ""
             echo "| 架构 | quickfile | luci-app-quickfile |"
             echo "| :--- | :--- | :--- |"
