@@ -1,9 +1,10 @@
+
 # luci-app-quickfile
 
 **轻量级 OpenWrt/LuCI 网页文件管理器**
 
 ---
-
+## [点击此处进入讨论](https://github.com/wkccd/quickfile/discussions)
 ## 功能特点
 
 - **直观的文件管理界面**  
