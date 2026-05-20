@@ -1,12 +1,7 @@
-name: Build & Release
+name: Build quickfile & Release
 
 on:
   workflow_dispatch:
-    inputs:
-      prerelease:
-        description: '标记为预发布版本'
-        type: boolean
-        default: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -170,45 +165,36 @@ jobs:
           }
 
           {
-            echo "# quickfile ${TAG}"
-            echo ""
-            if [ -n "$PREVIOUS_TAG" ]; then
-              echo "_Changes since ${PREVIOUS_TAG} / 自 ${PREVIOUS_TAG} 以来的更新。_"
-            else
-              echo "_Initial release notes / 初始发布说明。_"
-            fi
-            echo ""
-            write_section "New Features / 新功能" '^feat([(][^)]+[)])?!?:'
-            write_section "Improvements / 改进" '^(perf|refactor)([(][^)]+[)])?!?:'
-            write_section "Bug Fixes / 问题修复" '^fix([(][^)]+[)])?!?:'
-            write_section "Build & Release / 构建与发布" '^(ci|build)([(][^)]+[)])?!?:'
-            write_section "Documentation / 文档" '^docs([(][^)]+[)])?!?:'
-            write_section "Maintenance / 维护" '^(chore|test)([(][^)]+[)])?!?:'
-            echo "## Packages / 安装包"
-            echo ""
             echo "## 📦 SDK 24.10 · (IPK)"
             echo ""
             echo "| 架构 | quickfile | luci-app-quickfile |"
             echo "| :--- | :--- | :--- |"
             luci_ipk=$(ls dist/luci-app-quickfile_*_all.ipk 2>/dev/null | head -1)
             luci_ipk_link=$( [ -n "$luci_ipk" ] && echo "[$(basename $luci_ipk)](${BASE}/$(basename $luci_ipk))" || echo "—" )
+            # 这里补上 i18n 中文语言包
+            luci_i18n_ipk=$(ls dist/luci-i18n-quickfile-zh-cn_*_all.ipk 2>/dev/null | head -1)
+            luci_i18n_link=$( [ -n "$luci_i18n_ipk" ] && echo "[$(basename $luci_i18n_ipk)](${BASE}/$(basename $luci_i18n_ipk))" || echo "—" )
+
             for arch in $ARCHS; do
               f=$(ls dist/quickfile_*_${arch}.ipk 2>/dev/null | head -1)
               link=$( [ -n "$f" ] && echo "[$(basename $f)](${BASE}/$(basename $f))" || echo "—" )
-              echo "| \`${arch}\` | ${link} | ${luci_ipk_link} |"
+              # 输出行最后增加 i18n 列
+              echo "| \`${arch}\` | ${link} | ${luci_ipk_link} | ${luci_i18n_link} |"
             done
 
             echo ""
             echo "## 📦 SDK 25.12 · (APK)"
             echo ""
-            echo "| 架构 | quickfile | luci-app-quickfile |"
-            echo "| :--- | :--- | :--- |"
+            echo "| 架构 | quickfile | luci-app-quickfile | luci-i18n-quickfile-zh-cn |"
+            echo "| :--- | :--- | :--- | :--- |"
             for arch in $ARCHS; do
               f_core=$(ls dist/quickfile-*-${arch}.apk 2>/dev/null | head -1)
               f_luci=$(ls dist/luci-app-quickfile-*-${arch}.apk 2>/dev/null | head -1)
+              f_i18n=$(ls dist/luci-i18n-quickfile-zh-cn-*-${arch}.apk 2>/dev/null | head -1)
               link_core=$( [ -n "$f_core" ] && echo "[$(basename $f_core)](${BASE}/$(basename $f_core))" || echo "—" )
               link_luci=$( [ -n "$f_luci" ] && echo "[$(basename $f_luci)](${BASE}/$(basename $f_luci))" || echo "—" )
-              echo "| \`${arch}\` | ${link_core} | ${link_luci} |"
+              link_i18n=$( [ -n "$f_i18n" ] && echo "[$(basename $f_i18n)](${BASE}/$(basename $f_i18n))" || echo "—" )
+              echo "| \`${arch}\` | ${link_core} | ${link_luci} | ${link_i18n} |"
             done
           } > release_notes.md
 
